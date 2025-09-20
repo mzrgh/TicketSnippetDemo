@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Snippet - Menú Principal</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f2f5;
+        }
+        .menu-container {
+            text-align: center;
+            background: white;
+            padding: 4em;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #007bff;
+            margin-bottom: 0.5em;
+        }
+        p {
+            color: #6c757d;
+            margin-bottom: 2.5em;
+        }
+        .menu-options a {
+            display: block;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            padding: 15px 30px;
+            margin: 1em 0;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .menu-options a:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .menu-options a.secondary {
+            background-color: #28a745;
+        }
+        .menu-options a.secondary:hover {
+            background-color: #1e7e34;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container">
+        <h1>Ticket Snippet</h1>
+        <p>Una nueva forma de simplificar las integraciones.</p>
+        <div class="menu-options">
+            <a href="/infografia.html">Explicación (Infografía)</a>
+            <a href="/simulador.html" class="secondary">Ejemplo Práctico (Simulador)</a>
+        </div>
+    </div>
+</body>
+</html>

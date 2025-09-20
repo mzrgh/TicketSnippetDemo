@@ -1,0 +1,24 @@
+# Dependencias
+node_modules/
+
+# Archivos de entorno y configuraciones sensibles
+.env
+.env.*
+!.env.example
+
+# Archivos de logs
+*.log
+
+# Archivos de configuración de la terminal
+.vscode/
+.idea/
+
+# Archivos y directorios generados
+dist/
+build/
+tmp/
+
+# Otros
+npm-debug.log
+yarn-debug.log
+yarn-error.log

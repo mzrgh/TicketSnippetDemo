@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Carrito v2</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f0f2f5; margin: 0; padding: 2em; }
+        .main-container { max-width: 1200px; margin: auto; }
+        .form-container { background: white; padding: 2em; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1, h2 { color: #1c1e21; text-align: center; }
+        .product-line { display: grid; grid-template-columns: 1fr 1fr 1fr 40px; gap: 1em; margin-bottom: 1em; align-items: center; }
+        .form-group { margin-bottom: 1.5em; }
+        label { font-weight: bold; display: block; margin-bottom: 0.5em; }
+        input { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #dddfe2; border-radius: 6px; font-size: 1em; }
+        button { padding: 12px 20px; border: none; border-radius: 6px; font-size: 1em; cursor: pointer; font-weight: bold; }
+        .btn-primary { background-color: #1877f2; color: white; width: 100%; }
+        .btn-secondary { background-color: #e4e6eb; color: #4b4f56; }
+        .btn-danger { background-color: #fa383e; color: white; padding: 8px; }
+        .results-grid { margin-top: 2em; display: grid; grid-template-columns: 1fr 1fr; gap: 2em; align-items: start; }
+        .result-box { background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .result-box h2 { text-align: left; padding: 0.5em 1em; border-bottom: 1px solid #dddfe2; margin-top:0; }
+        pre { background: #282c34; color: #abb2bf; padding: 1em; border-radius: 0 0 8px 8px; white-space: pre-wrap; word-wrap: break-word; font-family: monospace; max-height: 600px; overflow-y: auto; margin: 0; }
+        .ticket { padding: 1.5em; font-family: 'Courier New', Courier, monospace; }
+        .ticket-section { border-bottom: 1px dashed #333; padding-bottom: 1em; margin-bottom: 1em; }
+        .ticket-section:last-child { border-bottom: none; }
+        .ticket-header, .ticket-footer { text-align: center; }
+        .ticket-lines p, .ticket-snippet p { margin: 0.2em 0; display: flex; justify-content: space-between; }
+        .ticket-snippet p { color: #d9534f; font-weight: bold; }
+        .ticket-snippet p.points { color: #5cb85c; }
+        .total { font-size: 1.2em; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="form-container">
+            <h1>Simulador de Carrito Inteligente</h1>
+            <form id="cart-form">
+                <div id="product-lines-container"></div>
+                <button type="button" id="add-line-btn" class="btn-secondary">Añadir Línea de Producto (+)</button>
+                <hr style="border: none; border-top: 1px solid #dddfe2; margin: 1.5em 0;">
+                
+                <div class="form-group">
+                    <label for="cashback_redeem">Cashback a redimir (€):</label>
+                    <input type="number" id="cashback_redeem" value="0" step="0.01" min="0">
+                </div>
+
+                <button type="submit" class="btn-primary">✨ Simular Carrito</button>
+            </form>
+        </div>
+
+        <div class="results-grid">
+            <div class="result-box">
+                <h2>Respuesta Completa (JSON)</h2>
+                <pre id="json-response">Esperando simulación...</pre>
+            </div>
+            <div class="result-box">
+                <h2>Ticket Resultante (Formateado)</h2>
+                <div id="ticket-display" class="ticket">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('cart-form');
+            const linesContainer = document.getElementById('product-lines-container');
+            const addLineBtn = document.getElementById('add-line-btn');
+            const jsonResponseEl = document.getElementById('json-response');
+            const ticketDisplayEl = document.getElementById('ticket-display');
+
+            const addProductLine = (prodId = '', qty = 1, price = 0) => {
+                const lineDiv = document.createElement('div');
+                lineDiv.classList.add('product-line');
+                lineDiv.innerHTML = `
+                    <input type="text" placeholder="ID de Producto" value="${prodId || Math.floor(Math.random() * 500) + 100}" required>
+                    <input type="number" placeholder="Cantidad" value="${qty}" min="1" step="1" required>
+                    <input type="number" placeholder="Precio Unitario" value="${price || (Math.random() * 30 + 5).toFixed(2)}" step="0.01" required>
+                    <button type="button" class="btn-danger" onclick="this.parentElement.remove()">X</button>
+                `;
+                linesContainer.appendChild(lineDiv);
+            };
+
+            addLineBtn.addEventListener('click', () => addProductLine());
+            // Añadir líneas de ejemplo para probar fácilmente las promociones
+            addProductLine('123', 1, 25.00); // Producto "Estrella"
+            addProductLine('456', 2, 10.00); // Producto para la promo 2x1
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                jsonResponseEl.textContent = 'Procesando...';
+                ticketDisplayEl.innerHTML = '<p>Calculando...</p>';
+
+                const inputLines = [];
+                const lineElements = linesContainer.querySelectorAll('.product-line');
+                lineElements.forEach(lineEl => {
+                    const inputs = lineEl.querySelectorAll('input');
+                    inputLines.push({
+                        product_id: inputs[0].value,
+                        quantity: parseFloat(inputs[1].value),
+                        price: parseFloat(inputs[2].value)
+                    });
+                });
+                
+                const cashbackToRedeem = parseFloat(document.getElementById('cashback_redeem').value) || 0;
+
+                const payload = {
+                    ticket_id: Math.floor(Date.now() / 1000),
+                    creation_date: new Date().toISOString(),
+                    lines: inputLines,
+                    cashback_to_redeem: cashbackToRedeem
+                };
+
+                try {
+                    const response = await fetch('/cart/simulate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || 'Error en la petición');
+                    
+                    jsonResponseEl.textContent = JSON.stringify(data, null, 2);
+                    renderTicket(payload, data);
+
+                } catch (error) {
+                    const errorMessage = `Error: ${error.message}`;
+                    jsonResponseEl.textContent = errorMessage;
+                    ticketDisplayEl.innerHTML = `<p style="color:red;">${errorMessage}</p>`;
+                }
+            });
+
+            function renderTicket(input, output) {
+                const originalTotal = input.lines.reduce((acc, line) => acc + (line.price * line.quantity), 0);
+                
+                let headerHTML = `
+                    <div class="ticket-section ticket-header"><h3>TICKET #${input.ticket_id}</h3><p>${new Date(input.creation_date).toLocaleString()}</p></div>
+                    <div class="ticket-section ticket-lines"><h4>-- DETALLE --</h4>`;
+                input.lines.forEach(line => {
+                    headerHTML += `<p><span>${line.quantity}x PROD ${line.product_id}</span> <span>${(line.price * line.quantity).toFixed(2)}€</span></p>`;
+                });
+                headerHTML += `<p><span><strong>Subtotal</strong></span> <span><strong>${originalTotal.toFixed(2)}€</strong></span></p></div>`;
+                
+                let snippetHTML = `<div class="ticket-section ticket-snippet"><h4>-- AJUSTES Y PUNTOS --</h4>`;
+                if (output.TicketSnippet && output.TicketSnippet.length > 0) {
+                     output.TicketSnippet.forEach(line => {
+                        const isPoints = line.includes('Puntos');
+                        const [text, value] = line.split(':');
+                        snippetHTML += `<p class="${isPoints ? 'points' : ''}"><span>${text}</span> <span>${value}</span></p>`;
+                    });
+                } else {
+                    snippetHTML += `<p>Sin promociones aplicadas.</p>`;
+                }
+                snippetHTML += `</div>`;
+                
+                let footerHTML = `
+                    <div class="ticket-section ticket-footer">
+                        <p class="total"><span>TOTAL A PAGAR</span> <span>${output.total.toFixed(2)}€</span></p>
+                        <p>Gracias por su visita</p>
+                    </div>`;
+
+                ticketDisplayEl.innerHTML = headerHTML + snippetHTML + footerHTML;
+            }
+        });
+    </script>
+</body>
+
+
+
+<style>
+    .back-to-menu {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background-color: #28a745;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: bold;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        transition: transform 0.2s ease;
+        z-index: 1000;
+    }
+    .back-to-menu:hover {
+        transform: scale(1.05);
+    }
+</style>
+<a href="/index.html" class="back-to-menu">🏠 Volver al Menú</a>
+
+</html>
