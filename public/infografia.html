@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infografía: Ticket Snippet</title>
+    <title>Explicación: Ticket Snippet</title>
     <style>
-        /* --- Estilos Generales --- */
         :root {
-            --color-primary: #007bff;
+            --color-primary: #0055ff;
             --color-dark: #212529;
             --color-light: #f8f9fa;
             --color-success: #28a745;
@@ -15,333 +14,281 @@
             --color-grey: #6c757d;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        html, body {
             margin: 0;
-            background-color: var(--color-light);
-            color: var(--color-dark);
+            padding: 0;
+            height: 100%;
+            overflow: hidden; /* Evita el scroll de la página */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
-        /* --- Estructura de Secciones --- */
+        /* --- Header Fijo con Logo --- */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1001;
+            box-sizing: border-box;
+        }
+        .main-header img {
+            height: 40px;
+            width: auto;
+        }
+
+        .presentation-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slides-wrapper {
+            display: flex;
+            width: 400%; /* 100% por cada una de las 4 secciones */
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+
         .section {
-            padding: 80px 20px;
-            max-width: 960px;
-            margin: auto;
-            text-align: center;
-            opacity: 0; /* Oculto por defecto para animación */
-            transform: translateY(30px); /* Desplazado para animación */
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-
-        .section.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        h1, h2, h3 {
-            margin-top: 0;
-        }
-
-        h1 { font-size: 3.5em; color: var(--color-primary); }
-        h2 { font-size: 2.5em; color: var(--color-dark); }
-        p.subtitle { font-size: 1.2em; color: var(--color-grey); max-width: 600px; margin: 1em auto; }
-
-        /* --- Hero Header --- */
-        .hero {
-            background-color: white;
-            padding-top: 100px;
-            padding-bottom: 100px;
-        }
-
-        /* --- Sección: El Problema --- */
-        .problem-container {
+            width: 25%;
+            height: 100%;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            gap: 2em;
-            margin-top: 3em;
+            align-items: center;
+            text-align: center;
+            padding: 80px 2em 2em 2em;
+            box-sizing: border-box;
         }
-        .icon { font-size: 5em; }
-        .arrows { font-size: 3em; color: var(--color-danger); }
-        .problem-box {
-            border: 2px dashed var(--color-danger);
-            padding: 1em;
-            border-radius: 8px;
-            background: #fff5f5;
-        }
-        .problem-box h3 { color: var(--color-danger); }
-        .problem-box ul { text-align: left; list-style-type: '❌ '; padding-left: 1.5em; }
 
-        /* --- Sección: La Solución --- */
-        .solution {
-            background-color: var(--color-dark);
-            color: white;
-        }
-        .solution h2, .solution p { color: white; }
-        .snippet-box {
-            background: linear-gradient(145deg, #47caff, #007bff);
-            color: white;
-            padding: 2em;
-            border-radius: 12px;
-            margin: 2em auto;
-            max-width: 400px;
-            text-align: left;
-            font-family: 'Courier New', monospace;
-            box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3);
-        }
-        .snippet-box strong { display: block; margin-bottom: 1em; }
-
-        /* --- Sección: Cómo Funciona (Flujo) --- */
-        .flow-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: flex-start;
-            margin-top: 3em;
-            gap: 1em;
-        }
-        .flow-step {
-            flex: 1;
-        }
-        .flow-step .icon {
-            font-size: 4em;
+        h1 { font-size: 3em; color: var(--color-primary); }
+        h2 { font-size: 2.5em; color: var(--color-dark); margin-bottom: 0.5em;}
+        p { font-size: 1.2em; color: var(--color-grey); max-width: 800px; line-height: 1.6; }
+        .icon { font-size: 2.5em; margin-bottom: 0.2em; }
+        .highlight {
+            font-weight: bold;
             color: var(--color-primary);
         }
-        .flow-step h4 { font-size: 1.2em; }
-        .flow-arrow {
-            font-size: 2em;
-            color: var(--color-grey);
-            margin-top: 50px;
-        }
 
-        /* --- Sección: Antes y Después --- */
+        /* --- Estilos por Sección --- */
+        #objetivo { background-color: var(--color-light); }
+        #as-is { background-color: #fff0f0; }
+        #idea { background-color: #e9f7ef; }
+        #beneficios { background-color: white; }
+        
+        /* Contenido específico */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2em;
+            align-items: center;
+            width: 100%;
+            max-width: 1100px;
+        }
+        .content-grid img {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
         .comparison-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2em;
+            gap: 1em;
             text-align: left;
-            margin-top: 3em;
+            margin-top: 1em;
+            width: 100%;
+            max-width: 900px;
         }
-        .comparison-grid h3 { text-align: center; }
+        .comparison-grid h3 { text-align: center; font-size: 1.1em; margin-top:0; }
         .code-box {
             padding: 1em;
             border-radius: 8px;
             font-family: 'Courier New', monospace;
             white-space: pre-wrap;
-            font-size: 0.9em;
-            height: 100%;
+            font-size: 0.8em;
+            line-height: 1.4;
         }
-        .before .code-box { background-color: #ffebeb; border: 2px solid var(--color-danger); }
+        .before .code-box { background-color: #ffebeb; border: 1px solid var(--color-danger); }
         .before h3 { color: var(--color-danger); }
-        .after .code-box { background-color: #e9f7ef; border: 2px solid var(--color-success); }
+        .after .code-box { background-color: #d4edda; border: 1px solid var(--color-success); }
         .after h3 { color: var(--color-success); }
 
-        /* --- Sección: Beneficios --- */
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2em;
-            margin-top: 3em;
+        .flow-container { 
+            display: flex; 
+            gap: 2em; 
+            margin-top: 2em;
+            padding: 1em;
+            background-color: rgba(255,255,255,0.5);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 900px;
         }
-        .benefit-card {
-            background: white;
-            padding: 2em;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
+        .flow-step { flex: 1; }
+        .flow-step .icon { color: var(--color-primary); }
+        .flow-step h4 { margin: 0.5em 0 0.2em 0; }
+        .flow-step p { font-size: 0.9em; line-height: 1.4; margin: 0; }
+        .flow-arrow { font-size: 2em; color: var(--color-grey); margin-top: 40px; }
+
+
+        .benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2em; width: 100%; max-width: 800px; }
+        .benefit-card { background: var(--color-light); padding: 1.5em; border-radius: 8px; }
         .benefit-card .icon { color: var(--color-success); font-size: 3em; }
-        .benefit-card h4 { font-size: 1.2em; }
 
-        /* --- Footer --- */
-        .footer {
-            background-color: var(--color-primary);
-            color: white;
-        }
-        .footer h2, .footer p { color: white; }
 
-        /* --- Media Queries para Móviles --- */
-        @media (max-width: 768px) {
-            h1 { font-size: 2.5em; }
-            h2 { font-size: 1.8em; }
-            .problem-container, .flow-container { flex-direction: column; }
-            .flow-arrow { transform: rotate(90deg); margin: 0; }
-            .comparison-grid { grid-template-columns: 1fr; }
-        }
+        /* --- Controles de Navegación --- */
+        .nav-button { position: fixed; top: 50%; transform: translateY(-50%); background-color: rgba(0, 0, 0, 0.4); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer; z-index: 100; }
+        .nav-button:hover { background-color: rgba(0, 0, 0, 0.6); }
+        #prev-btn { left: 20px; }
+        #next-btn { right: 20px; }
+        .dots-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
+        .dot { width: 12px; height: 12px; background-color: #ccc; border-radius: 50%; cursor: pointer; transition: background-color 0.3s; }
+        .dot.active { background-color: var(--color-primary); }
+        .back-to-menu { position: fixed; top: 20px; right: 30px; background-color: var(--color-dark); color: white; padding: 10px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 1002; }
+
     </style>
 </head>
 <body>
-
-    <div id="hero" class="section hero">
-        <h1>Ticket Snippet</h1>
-        <p class="subtitle">La forma inteligente de integrar la lealtad. <br>Más rápido, más simple y a prueba de errores.</p>
-    </div>
-
-    <div id="problem" class="section">
-        <h2>El Reto Actual</h2>
-        <p class="subtitle">Hoy, integrar un TPV es una tarea compleja. Le pasamos toda la responsabilidad.</p>
-        <div class="problem-container">
-            <div class="icon">💻</div>
-            <div class="arrows"> tangled_arrows </div>
-            <div class="problem-box">
-                <h3>El TPV debe...</h3>
-                <ul>
-                    <li>Interpretar múltiples objetos JSON.</li>
-                    <li>Entender reglas de negocio complejas.</li>
-                    <li>Calcular y formatear el ticket final.</li>
-                    <li>Actualizarse con cada nueva promoción.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <div id="solution" class="section solution">
-        <h2>La Solución: Devolver el Trabajo Hecho</h2>
-        <p class="subtitle">En lugar de datos crudos, el API entrega un bloque pre-formateado y listo para imprimir.</p>
-        <div class="snippet-box">
-            <strong>"Ticket_Snippet": [</strong>
-            <span>&nbsp;&nbsp;"Dto. 50% 2ª Ud.: -5.00€",</span><br>
-            <span>&nbsp;&nbsp;"Cashback Redimido: -10.00€",</span><br>
-            <span>&nbsp;&nbsp;"Puntos Acumulados: +125 pts"</span><br>
-            <strong>]</strong>
-        </div>
-    </div>
-
-    <div id="flow" class="section">
-        <h2>Un Flujo de Trabajo Simple</h2>
-        <div class="flow-container">
-            <div class="flow-step">
-                <div class="icon">🛒</div>
-                <h4>1. El POS Lee</h4>
-                <p>Escanea los artículos del cliente.</p>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-step">
-                <div class="icon">☁️</div>
-                <h4>2. Llama al API</h4>
-                <p>Envía el carrito a Loyal Guru para el cálculo.</p>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-step">
-                <div class="icon">🧾</div>
-                <h4>3. Imprime el Snippet</h4>
-                <p>Recibe el bloque y lo imprime directamente, sin pensar.</p>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-step">
-                <div class="icon">✅</div>
-                <h4>4. Cierre y Pago</h4>
-                <p>Imprime el total final y completa la venta.</p>
-            </div>
-        </div>
-    </div>
     
-    <div id="comparison" class="section">
-        <h2>La Diferencia es Clara</h2>
-        <div class="comparison-grid">
-            <div class="before">
-                <h3>ANTES: Complejidad</h3>
-                <div class="code-box">
+    <header class="main-header">
+        <img src="651704c3c5cd2d4a6b6f3461_loyal guru logo.png" alt="Loyal Guru Logo">
+    </header>
+
+    <div class="presentation-container">
+        <div class="slides-wrapper">
+            <div id="objetivo" class="section">
+                <div class="icon">🎯</div>
+                <h1>Objetivo Principal</h1>
+                <p>
+                    <span class="highlight">Simplificar</span> la integración del POS con el nuevo motor de Loyalty de Loyal Guru.
+                    <br>
+                    <span class="highlight">Simplificando</span> la lógica a implementar en el POS y tratando de acelerar el tiempo de desarrollo necesario.
+                </p>
+            </div>
+
+            <div id="as-is" class="section">
+                <div class="content-grid">
+                    <div>
+                        <h2>Situación Actual (AS-IS)</h2>
+                        <p>Hoy, para mostrar el ticket del cliente, el POS debe interpretar la respuesta del API de LG, la cual es compleja y requiere entendimiento y lógicas de integración.</p>
+                    </div>
+                    <div>
+                        <img src="ima.png" alt="Ejemplo de respuesta compleja del API">
+                    </div>
+                </div>
+            </div>
+
+            <div id="idea" class="section">
+                <h2>La Idea y su Funcionamiento</h2>
+                <div class="comparison-grid">
+                    <div class="before">
+                        <h3>ANTES: El TPV Interpreta Esto</h3>
+                        <div class="code-box">
 {
   "effects": [...],
   "scores": [...],
-  "vouchers": [...],
   "cashbacks": [...],
-  "promotions": [
-    {
-      "promotion_id": 201,
-      "discount": 5,
-      "product_id": "456",
-      ...
-    }
-  ],
-  ...
+  "vouchers": [...]
 }
-                </div>
-            </div>
-            <div class="after">
-                <h3>AHORA: Simplicidad</h3>
-                <div class="code-box">
+                        </div>
+                    </div>
+                    <div class="after">
+                        <h3>AHORA: El TPV Imprime Esto</h3>
+                        <div class="code-box">
 {
-  "total": 35.00,
-  "points_earned": 350,
-  "TicketSnippet": [
-    "Dto. 50% 2ª Ud. (Prod 456): -5.00€",
+  "Ticket_Snippet": [
+    "Dto. 50% 2ª Ud.: -5.00€",
     "Cashback Redimido: -10.00€",
-    "Puntos Acumulados: +350 pts"
-  ],
-  ...
+    "Puntos Acumulados: +125 pts"
+  ]
 }
+                        </div>
+                    </div>
+                </div>
+                <div class="flow-container">
+                    <div class="flow-step">
+                        <div class="icon">🛒</div>
+                        <h4>1. El POS Lee</h4>
+                        <p>Escanea los artículos del cliente.</p>
+                    </div>
+                    <div class="flow-arrow">➡️</div>
+                    <div class="flow-step">
+                        <div class="icon">☁️</div>
+                        <h4>2. Llama al API</h4>
+                        <p>Envía el carrito a Loyal Guru para el cálculo.</p>
+                    </div>
+                    <div class="flow-arrow">➡️</div>
+                    <div class="flow-step">
+                        <div class="icon">🧾</div>
+                        <h4>3. Imprime Snippet</h4>
+                        <p>Recibe el bloque y lo imprime directamente.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="beneficios" class="section">
+                <h2>Beneficios Clave</h2>
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="icon">🚀</div>
+                        <h4>Integración Express</h4>
+                        <p>Reduce el tiempo y coste de los proyectos de semanas a días.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="icon">✅</div>
+                        <h4>Cero Errores</h4>
+                        <p>Elimina el riesgo de errores de cálculo y lógica en el TPV.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="icon">🎨</div>
+                        <h4>Consistencia Total</h4>
+                        <p>Garantiza que el mensaje al cliente sea idéntico en todos los canales.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="icon">🌍</div>
+                        <h4>Solución Universal</h4>
+                        <p>Facilita la integración en TPVs, E-commerce y Apps por igual.</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div id="benefits" class="section">
-        <h2>Beneficios Clave</h2>
-        <div class="benefits-grid">
-            <div class="benefit-card">
-                <div class="icon">🚀</div>
-                <h4>Integración Express</h4>
-                <p>Reduce el tiempo y coste de integración de semanas a días.</p>
-            </div>
-            <div class="benefit-card">
-                <div class="icon">✅</div>
-                <h4>Cero Errores</h4>
-                <p>Elimina el riesgo de errores de cálculo en el TPV.</p>
-            </div>
-            <div class="benefit-card">
-                <div class="icon">🎨</div>
-                <h4>Consistencia de Marca</h4>
-                <p>Asegura que el mensaje sea idéntico en todos los canales.</p>
-            </div>
-             <div class="benefit-card">
-                <div class="icon">🌍</div>
-                <h4>Solución Universal</h4>
-                <p>Facilita la integración en TPVs, E-commerce y Apps por igual.</p>
-            </div>
+        <button id="prev-btn" class="nav-button">&lt;</button>
+        <button id="next-btn" class="nav-button">&gt;</button>
+        <div class="dots-container">
+            <div class="dot active" data-slide="0"></div><div class="dot" data-slide="1"></div><div class="dot" data-slide="2"></div><div class="dot" data-slide="3"></div>
         </div>
-    </div>
-
-    <div id="footer" class="section footer">
-        <h2>Simplifica. Acelera. Innova.</h2>
-        <p class="subtitle">Con Ticket Snippet, la integración deja de ser un obstáculo y se convierte en una oportunidad.</p>
+        <a href="/index.html" class="back-to-menu">🏠 Volver al Menú</a>
     </div>
 
     <script>
-        // Script simple para animar las secciones al hacer scroll
-        const sections = document.querySelectorAll('.section');
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrapper = document.querySelector('.slides-wrapper');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const dots = document.querySelectorAll('.dot');
+            const totalSlides = dots.length;
+            let currentSlide = 0;
 
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, {
-            threshold: 0.1 // La animación se dispara cuando el 10% de la sección es visible
-        });
+            function goToSlide(slideIndex) {
+                wrapper.style.transform = `translateX(-${slideIndex * (100 / totalSlides)}%)`;
+                dots.forEach(dot => dot.classList.remove('active'));
+                dots[slideIndex].classList.add('active');
+                prevBtn.style.display = slideIndex === 0 ? 'none' : 'block';
+                nextBtn.style.display = slideIndex === totalSlides - 1 ? 'none' : 'block';
+                currentSlide = slideIndex;
+            }
 
-        sections.forEach(section => {
-            observer.observe(section);
+            nextBtn.addEventListener('click', () => { if (currentSlide < totalSlides - 1) goToSlide(currentSlide + 1); });
+            prevBtn.addEventListener('click', () => { if (currentSlide > 0) goToSlide(currentSlide - 1); });
+            dots.forEach(dot => { dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.slide))); });
+            goToSlide(0);
         });
     </script>
 </body>
-<style>
-    .back-to-menu {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        background-color: #007bff;
-        color: white;
-        padding: 12px 18px;
-        border-radius: 50px;
-        text-decoration: none;
-        font-weight: bold;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        transition: transform 0.2s ease;
-    }
-    .back-to-menu:hover {
-        transform: scale(1.05);
-    }
-</style>
-<a href="/index.html" class="back-to-menu">🏠 Volver al Menú</a>
 </html>
