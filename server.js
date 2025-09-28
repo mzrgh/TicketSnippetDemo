@@ -91,7 +91,7 @@ app.post('/cart/simulate', (req, res) => {
         lines: lines.map((line, index) => ({
             order: index + 1,
             product_id: line.product_id,
-            total: line.price * line.quantity,
+            tot_line: line.price * line.quantity,
             quantity: line.quantity,
             product_name: `Producto ${line.product_id}`,
         })),
